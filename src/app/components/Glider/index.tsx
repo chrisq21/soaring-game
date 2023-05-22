@@ -15,24 +15,24 @@ const liftStrength = 5
 const gravityForce = new THREE.Vector3(0, -gravityStrength, 0)
 const liftForce = new THREE.Vector3(0, liftStrength, 0)
 
-function Car({carRef, isIntersecting}) {
+function Glider({gliderRef, isIntersecting}) {
   const {nodes, materials} = useSpline('https://prod.spline.design/vnJ4BLS7Ojq1Qocw/scene.splinecode')
 
-  const groundCarHeight = -150 // TODO calculate from object
+  const groundGliderHeight = -150 // TODO calculate from object
 
   // Gravity & Lift;
   useFrame(() => {
-    if (carRef.current) {
+    if (gliderRef.current) {
       // Are we over a thermal?
       if (isIntersecting) {
-        carRef.current.position.add(liftForce)
+        gliderRef.current.position.add(liftForce)
       } else {
-        carRef.current.position.add(gravityForce)
+        gliderRef.current.position.add(gravityForce)
       }
 
-      // Check if the car has hit the ground
-      if (carRef.current.position.y <= groundCarHeight) {
-        carRef.current.position.y = groundCarHeight
+      // Check if the glider has hit the ground
+      if (gliderRef.current.position.y <= groundGliderHeight) {
+        gliderRef.current.position.y = groundGliderHeight
       }
     }
   })
@@ -42,30 +42,30 @@ function Car({carRef, isIntersecting}) {
     let isTurningRight = false
 
     const moveForward = () => {
-      if (carRef.current.position.y <= groundCarHeight) {
-        // Stop moving forward if the car has hit the ground
+      if (gliderRef.current.position.y <= groundGliderHeight) {
+        // Stop moving forward if the glider has hit the ground
         return
       }
 
       const forwardForce = new THREE.Vector3(0, 0, -forwardVelocity)
       const quaternion = new THREE.Quaternion()
-      carRef.current.getWorldQuaternion(quaternion)
+      gliderRef.current.getWorldQuaternion(quaternion)
       forwardForce.applyQuaternion(quaternion)
-      carRef.current.position.add(forwardForce)
+      gliderRef.current.position.add(forwardForce)
 
       requestAnimationFrame(moveForward)
     }
 
     const turnLeft = () => {
       if (isTurningLeft) {
-        carRef.current.rotateY(turnVelocity)
+        gliderRef.current.rotateY(turnVelocity)
         requestAnimationFrame(turnLeft)
       }
     }
 
     const turnRight = () => {
       if (isTurningRight) {
-        carRef.current.rotateY(-turnVelocity)
+        gliderRef.current.rotateY(-turnVelocity)
         requestAnimationFrame(turnRight)
       }
     }
@@ -110,7 +110,7 @@ function Car({carRef, isIntersecting}) {
     }
   }, [])
 
-  return <Body carRef={carRef} nodes={nodes} materials={materials} />
+  return <Body gliderRef={gliderRef} nodes={nodes} materials={materials} />
 }
 
-export default Car
+export default Glider

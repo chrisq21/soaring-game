@@ -1,8 +1,8 @@
 import React from 'react'
 
-function CarBody({carRef, nodes, materials}) {
+function GliderBody({gliderRef, nodes, materials}) {
   return (
-    <group name="car" position={[1347.43, 2000, -758.1]} rotation={[-Math.PI, 0.45, -Math.PI]} scale={1.03} ref={carRef}>
+    <group name="glider" position={[1347.43, 2000, -758.1]} rotation={[-Math.PI, 0.45, -Math.PI]} scale={1.03} ref={gliderRef}>
       <mesh
         name="main part"
         geometry={nodes['main part'].geometry}
@@ -422,4 +422,4 @@ function CarBody({carRef, nodes, materials}) {
   )
 }
 
-export default CarBody
+export default GliderBody

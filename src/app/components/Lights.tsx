@@ -1,15 +1,15 @@
 import {useFrame} from '@react-three/fiber'
 import React, {useRef} from 'react'
 
-function Lights({carRef}) {
+function Lights({gliderRef}) {
   const lightRef = useRef(null)
 
   useFrame(() => {
-    if (lightRef.current && carRef.current) {
-      const carPosition = carRef.current.position.clone()
-      carPosition.y += 10 // Adjust the height of the light above the car
+    if (lightRef.current && gliderRef.current) {
+      const gliderPosition = gliderRef.current.position.clone()
+      gliderPosition.y += 10 // Adjust the height of the light above the glider
 
-      lightRef.current.position.copy(carPosition)
+      lightRef.current.position.copy(gliderPosition)
     }
   })
 
@@ -30,7 +30,7 @@ function Lights({carRef}) {
         shadow-camera-bottom={-5000}
         color="#f2f0eb"
         position={[-933.05, 2013.36, 1463.42]} // default position
-        target={carRef?.current}
+        target={gliderRef?.current}
         rotation={[-Math.PI / 2, 0, 0]} // Rotate the light to point straight down
       />
       {/* Hemisphere Light */}
@@ -41,7 +41,7 @@ function Lights({carRef}) {
 export default Lights
 
 // position={
-//   carRef?.current
-//     ? carRef.current.position
+//   gliderRef?.current
+//     ? gliderRef.current.position
 //     : [-933.05, 2013.36, 1463.42]
 // }

@@ -2,22 +2,22 @@ import React from 'react'
 import {useFrame, useThree} from '@react-three/fiber'
 import {PerspectiveCamera, OrbitControls, OrthographicCamera} from '@react-three/drei'
 
-function CameraFollow({carRef, camera}) {
+function CameraFollow({gliderRef, camera}) {
   useFrame(() => {
-    if (carRef.current) {
-      const carPosition = carRef.current.position
+    if (gliderRef.current) {
+      const gliderPosition = gliderRef.current.position
 
-      // Set the camera position to follow the car with an offset
-      camera.position.set(carPosition.x, carPosition.y + 1800, carPosition.z + 2900)
+      // Set the camera position to follow the glider with an offset
+      camera.position.set(gliderPosition.x, gliderPosition.y + 1800, gliderPosition.z + 2900)
 
-      camera.lookAt(carPosition)
+      camera.lookAt(gliderPosition)
     }
   })
 
   return null
 }
 
-function CustomCamera({carRef, camera}) {
+function CustomCamera({gliderRef, camera}) {
   const {viewport} = useThree()
   const {width, height} = viewport
 
@@ -25,7 +25,7 @@ function CustomCamera({carRef, camera}) {
     <>
       {/* <OrbitControls /> */}
       <PerspectiveCamera fov={75} aspect={width / height} near={0.1} far={100000} position={[1975.09, 2452.52, 5007.95]} name="Camera" makeDefault={true} />
-      <CameraFollow carRef={carRef} camera={camera} />
+      <CameraFollow gliderRef={gliderRef} camera={camera} />
       {/* <OrthographicCamera
         name="Camera"
         makeDefault={true}
