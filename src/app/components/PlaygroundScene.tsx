@@ -1,7 +1,7 @@
 import useSpline from '@splinetool/r3f-spline'
 import * as THREE from 'three'
 import {useThree, useFrame} from '@react-three/fiber'
-import React, {Ref, useEffect, useRef, useState} from 'react'
+import React, {useRef, useState} from 'react'
 
 import CustomCamera from './CustomCamera'
 import Glider from './Glider'
@@ -19,7 +19,7 @@ export default function Scene({...props}) {
   const [isIntersecting, setIsIntersecting] = useState(false)
   const thermalMeshesArrayRef = useRef([])
 
-  // Detect glider intersection with thermal
+  // Detect glider intersection with thermals
   useFrame(() => {
     if (!gliderRef.current || !raycasterRef.current || !thermalMeshesArrayRef.current) return
 
