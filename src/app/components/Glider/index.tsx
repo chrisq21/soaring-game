@@ -7,7 +7,7 @@ import Body from './Body'
 
 /* Constants */
 // const forwardVelocity = 0;
-const forwardStrength = 1200
+const forwardStrength = 1900
 const turnStrength = 3
 const gravityStrength = 180
 const liftStrength = 200
@@ -18,7 +18,7 @@ let isTurningRight = false
 function Glider({gliderRef, isIntersecting}) {
   const {nodes, materials} = useSpline('https://prod.spline.design/vnJ4BLS7Ojq1Qocw/scene.splinecode')
 
-  const groundGliderHeight = -150 // TODO calculate from object
+  const groundGliderHeight = 180 // TODO calculate from object
 
   // Keyboard listeners
   useEffect(() => {

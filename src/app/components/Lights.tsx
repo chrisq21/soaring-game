@@ -29,7 +29,7 @@ function Lights({gliderRef}) {
         shadow-camera-top={5000}
         shadow-camera-bottom={-5000}
         color="#f2f0eb"
-        position={[-933.05, 2013.36, 1463.42]} // default position
+        position={[0, 0, 0]} // default position
         target={gliderRef?.current}
         rotation={[-Math.PI / 2, 0, 0]} // Rotate the light to point straight down
       />

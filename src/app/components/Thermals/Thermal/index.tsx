@@ -1,10 +1,15 @@
 import React, {useEffect, useRef, useState} from 'react'
 import * as THREE from 'three'
-
+// 9000, 20000
 function Thermal({pushThermalMeshRef}) {
   const thermalMeshRef = useRef(null)
-  const [xOff, setXOff] = useState(Math.random() * 10000)
-  const [zOff, setZOff] = useState(Math.random() * 1000)
+  const max = 40000
+  const min = -10
+
+  const xMax = 9000 * 2
+  const xMin = -9000 * 2
+  const [xOff, setXOff] = useState(Math.floor(Math.random() * (xMax - xMin + 1)) + xMin)
+  const [zOff, setZOff] = useState(Math.floor(Math.random() * (max - min + 1)) + min)
 
   useEffect(() => {
     if (thermalMeshRef.current) {
@@ -16,9 +21,8 @@ function Thermal({pushThermalMeshRef}) {
       name={`thermal`}
       geometry={new THREE.BoxGeometry(2000, 2000)}
       material={new THREE.MeshBasicMaterial({color: 'blue'})}
-      castShadow
       receiveShadow
-      position={[1964.87 - xOff, 30, 208.8 - zOff]}
+      position={[xOff, 100, -zOff]}
       rotation={[-Math.PI / 2, 0, 0]}
       ref={thermalMeshRef}
       // scale={0.1}

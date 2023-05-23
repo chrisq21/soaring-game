@@ -2,7 +2,7 @@ import React from 'react'
 
 function GliderBody({gliderRef, nodes, materials}) {
   return (
-    <group name="glider" position={[1347.43, 2000, -758.1]} rotation={[-Math.PI, 0.45, -Math.PI]} scale={1.03} ref={gliderRef}>
+    <group name="glider" position={[0, 3000, 0]} rotation={[-Math.PI, 0.45, -Math.PI]} scale={1.03} ref={gliderRef}>
       <mesh
         name="main part"
         geometry={nodes['main part'].geometry}

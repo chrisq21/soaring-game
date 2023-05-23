@@ -52,7 +52,7 @@ export default function Scene({...props}) {
       <color attach="background" args={['#fbf1d6']} />
       <CustomCamera gliderRef={gliderRef} camera={camera} />
       <group {...props} dispose={null}>
-        <group name="scene" position={[400.52, 348.03, -151.01]}>
+        <group name="scene" position={[0, 0, 0]}>
           <Glider gliderRef={gliderRef} isIntersecting={isIntersecting} />
           <Ground nodes={nodes} materials={materials} isIntersecting={isIntersecting} />
           <Lights gliderRef={gliderRef} />
