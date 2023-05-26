@@ -3,21 +3,26 @@ import * as THREE from 'three'
 import {useThree, useFrame} from '@react-three/fiber'
 import React, {useRef, useState} from 'react'
 
-import CustomCamera from './CustomCamera'
+import CustomCamera from './Camera'
 import Glider from './Glider'
 import Ground from './Ground'
 import Lights from './Lights'
 import Thermals from './Thermals'
+import {ControlTypes} from '../types/controls'
 
 export default function Scene({...props}) {
   const {nodes, materials} = useSpline('https://prod.spline.design/vnJ4BLS7Ojq1Qocw/scene.splinecode')
 
   const {camera} = useThree()
   const gliderRef = useRef(null)
+
+  /* Detect thermals | TODO move this somewhere else */
   const raycasterRef = useRef(new THREE.Raycaster())
 
   const [isInLift, setIsInLift] = useState(false)
   const thermalMeshesArrayRef = useRef([])
+
+  const controlsType = ControlTypes.BACK
 
   // Detect glider intersection with thermals
   useFrame(() => {
@@ -50,10 +55,10 @@ export default function Scene({...props}) {
   return (
     <>
       <color attach="background" args={['#fbf1d6']} />
-      <CustomCamera gliderRef={gliderRef} camera={camera} />
+      <CustomCamera controlsType={controlsType} gliderRef={gliderRef} camera={camera} />
       <group {...props} dispose={null}>
         <group name="scene" position={[0, 0, 0]}>
-          <Glider gliderRef={gliderRef} isInLift={isInLift} />
+          <Glider gliderRef={gliderRef} isInLift={isInLift} controlsType={controlsType} />
           <Ground nodes={nodes} materials={materials} isInLift={isInLift} />
           <Lights gliderRef={gliderRef} />
           <Thermals thermalMeshesArrayRef={thermalMeshesArrayRef} />
