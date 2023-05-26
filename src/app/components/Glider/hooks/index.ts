@@ -45,7 +45,8 @@ export const useKeyboardControls = (gliderRef: any) => {
   }, [])
 
   const handleGliderRotation = (key: string, delta: number) => {
-    const turnVelocity = turnStrength * delta
+    // const turnVelocity = turnStrength * delta
+    const turnVelocity = turnStrength / 100
     if (key === 'ArrowLeft' || key === 'a') {
       // Turn left
       gliderRef.current.rotateY(turnVelocity)
@@ -74,8 +75,9 @@ export const useForwardMovement = (gliderRef: any) => {
       // Stop moving forward if the glider has hit the ground
       return
     }
-    const forwardVelocity = forwardStrength * delta
-    const forwardForce = new THREE.Vector3(0, 0, -forwardVelocity)
+    const forwardVelocity = forwardStrength / 100
+    // const forwardVelocity = forwardStrength * delta
+    const forwardForce = new THREE.Vector3(0, 0, forwardVelocity)
     const quaternion = new THREE.Quaternion()
     gliderRef.current.getWorldQuaternion(quaternion)
     forwardForce.applyQuaternion(quaternion)
@@ -86,7 +88,8 @@ export const useForwardMovement = (gliderRef: any) => {
 export const useLift = (gliderRef: any, inLift: boolean = false, liftStrength: number = defaultLiftStrength) => {
   useFrame((_, delta) => {
     // TODO do we need * delta here?
-    const liftVelocity = liftStrength * delta
+    // const liftVelocity = liftStrength * delta
+    const liftVelocity = liftStrength / 100
     const liftForce = new THREE.Vector3(0, liftVelocity, 0)
     if (gliderRef.current) {
       if (inLift) {
@@ -102,7 +105,8 @@ export const useGravity = (gliderRef: any, gravityStrength: number = defaultGrav
       return
     }
     // TODO do we need * delta here?
-    const gravityVelocity = gravityStrength * delta
+    // const gravityVelocity = gravityStrength * delta
+    const gravityVelocity = gravityStrength / 100
     const gravityForce = new THREE.Vector3(0, -gravityVelocity, 0)
     if (gliderRef.current) {
       // add gravity

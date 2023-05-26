@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useEffect} from 'react'
 import {useFrame, useThree} from '@react-three/fiber'
 import {PerspectiveCamera, OrbitControls, OrthographicCamera} from '@react-three/drei'
 
@@ -13,7 +13,7 @@ function CameraFollow({gliderRef, camera, isBackView = false}) {
       // camera.position.set(gliderPosition.x, gliderPosition.y + 1800, gliderPosition.z + 2900)
 
       // backview
-      camera.position.set(gliderPosition.x, gliderPosition.y + 500, gliderPosition.z + 2500)
+      camera.position.set(gliderPosition.x, gliderPosition.y + 500, gliderPosition.z + 1000)
 
       camera.lookAt(gliderPosition)
     }
@@ -26,17 +26,33 @@ function CustomCamera({gliderRef, camera}) {
   const {viewport} = useThree()
   const {width, height} = viewport
 
+  useEffect(() => {
+    if (gliderRef.current) {
+      const gliderPosition = gliderRef.current.position
+
+      // Set the camera position to follow the glider with an offset
+
+      // base
+      // camera.position.set(gliderPosition.x, gliderPosition.y + 1800, gliderPosition.z + 2900)
+
+      // backview
+      camera.position.set(gliderPosition.x, gliderPosition.y + 500, gliderPosition.z + 2500)
+
+      camera.lookAt(gliderPosition)
+    }
+  }, [])
+
   return (
     <>
-      {/* <OrbitControls /> */}
+      <OrbitControls />
 
       {/* Base Controls Camera */}
-      {/* <PerspectiveCamera fov={75} aspect={width / height} near={0.1} far={100000} position={[1975.09, 2452.52, 5007.95]} name="Camera" makeDefault={true} />
-      <CameraFollow gliderRef={gliderRef} camera={camera} /> */}
+      <PerspectiveCamera fov={75} aspect={width / height} near={0.1} far={100000} position={[1975.09, 2452.52, 5007.95]} name="Camera" makeDefault={true} />
+      <CameraFollow gliderRef={gliderRef} camera={camera} />
 
       {/* Behind Controls Camera */}
-      <PerspectiveCamera fov={75} aspect={width / height} near={0.1} far={100000} position={[1975.09, 2452.52, 5007.95]} name="Camera" makeDefault={true} />
-      <CameraFollow gliderRef={gliderRef} camera={camera} isBackView />
+      {/* <PerspectiveCamera fov={75} aspect={width / height} near={0.1} far={100000} position={[1975.09, 2452.52, 5007.95]} name="Camera" makeDefault={true} /> */}
+      {/* <CameraFollow gliderRef={gliderRef} camera={camera} isBackView /> */}
 
       {/* <OrthographicCamera
         name="Camera"

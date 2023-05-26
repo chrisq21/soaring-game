@@ -18,8 +18,7 @@ type GliderProps = {
   controls: ControlTypes
 }
 
-function Glider({gliderRef, isInLift, controls = ControlTypes.BACK}: GliderProps) {
-  console.log('controls', controls)
+function Glider({gliderRef, isInLift, controls = ControlTypes.BASE}: GliderProps) {
   const {nodes, materials} = useSpline('https://prod.spline.design/vnJ4BLS7Ojq1Qocw/scene.splinecode')
 
   if (controls === ControlTypes.BASE) {
