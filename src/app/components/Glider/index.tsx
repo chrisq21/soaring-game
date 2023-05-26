@@ -7,10 +7,10 @@ import Body from './Body'
 
 /* Constants */
 // const forwardVelocity = 0;
-const forwardStrength = 1900
+const forwardStrength = 2000
 const turnStrength = 3
-const gravityStrength = 180
-const liftStrength = 200
+const gravityStrength = 220
+const liftStrength = 400
 
 let isTurningLeft = false
 let isTurningRight = false
