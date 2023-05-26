@@ -1,5 +1,5 @@
 import {useFrame} from '@react-three/fiber'
-import {Ref, useEffect} from 'react'
+import {Ref, useEffect, useRef} from 'react'
 import * as THREE from 'three'
 
 const forwardStrength = 2000
@@ -115,6 +115,57 @@ export const useGravity = (gliderRef: any, gravityStrength: number = defaultGrav
       if (gliderRef.current.position.y <= groundGliderHeight) {
         gliderRef.current.position.y = groundGliderHeight
       }
+    }
+  })
+}
+
+export const useMouseControlXY = (gliderRef: any) => {
+  const mouseX = useRef(0)
+  const mouseY = useRef(0)
+
+  useEffect(() => {
+    const handleMouseMove = (event: MouseEvent) => {
+      mouseX.current = ((event.clientX / window.innerWidth) * 2 - 1) * 100
+      mouseY.current = ((1 - event.clientY / window.innerHeight) * 2 - 1) * 100
+    }
+
+    window.addEventListener('mousemove', handleMouseMove)
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove)
+    }
+  }, [])
+
+  useFrame(() => {
+    if (gliderRef.current) {
+      const mousePositionVector = new THREE.Vector3(mouseX.current, mouseY.current, 0)
+      gliderRef.current.position.add(mousePositionVector)
+    }
+  })
+}
+
+export const useMouseControlXZ = (gliderRef: any) => {
+  const mouseX = useRef(0)
+  const mouseZ = useRef(0)
+
+  useEffect(() => {
+    const handleMouseMove = (event) => {
+      mouseX.current = ((event.clientX / window.innerWidth) * 2 - 1) * 100
+      mouseZ.current = ((1 - event.clientY / window.innerHeight) * 2 - 1) * 100
+    }
+
+    window.addEventListener('mousemove', handleMouseMove)
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove)
+    }
+  }, [])
+
+  useFrame(() => {
+    if (gliderRef.current) {
+      const gliderPosition = gliderRef.current.position
+      const targetPosition = new THREE.Vector3(mouseX.current, 0, -mouseZ.current)
+      gliderPosition.add(targetPosition)
     }
   })
 }
