@@ -16,7 +16,7 @@ export default function Scene({...props}) {
   const gliderRef = useRef(null)
   const raycasterRef = useRef(new THREE.Raycaster())
 
-  const [isIntersecting, setIsIntersecting] = useState(false)
+  const [isInLift, setIsInLift] = useState(false)
   const thermalMeshesArrayRef = useRef([])
 
   // Detect glider intersection with thermals
@@ -37,12 +37,12 @@ export default function Scene({...props}) {
 
     // // Process the raycasting results
     if (intersects.length > 0) {
-      if (!isIntersecting) {
-        setIsIntersecting(true)
+      if (!isInLift) {
+        setIsInLift(true)
       }
     } else {
-      if (isIntersecting) {
-        setIsIntersecting(false)
+      if (isInLift) {
+        setIsInLift(false)
       }
     }
   })
@@ -53,8 +53,8 @@ export default function Scene({...props}) {
       <CustomCamera gliderRef={gliderRef} camera={camera} />
       <group {...props} dispose={null}>
         <group name="scene" position={[0, 0, 0]}>
-          <Glider gliderRef={gliderRef} isIntersecting={isIntersecting} />
-          <Ground nodes={nodes} materials={materials} isIntersecting={isIntersecting} />
+          <Glider gliderRef={gliderRef} isInLift={isInLift} />
+          <Ground nodes={nodes} materials={materials} isInLift={isInLift} />
           <Lights gliderRef={gliderRef} />
           <Thermals thermalMeshesArrayRef={thermalMeshesArrayRef} />
         </group>

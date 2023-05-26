@@ -1,6 +1,6 @@
 import React from 'react'
 import {MeshBasicMaterial, BoxGeometry} from 'three'
-function Ground({nodes, materials, isIntersecting}) {
+function Ground({nodes, materials, isInLift}) {
   return (
     <>
       <group name="grass" position={[0, 0, 0]}>

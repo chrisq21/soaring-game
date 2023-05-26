@@ -24,8 +24,15 @@ function CustomCamera({gliderRef, camera}) {
   return (
     <>
       {/* <OrbitControls /> */}
+
+      {/* Base Controls Camera */}
       <PerspectiveCamera fov={75} aspect={width / height} near={0.1} far={100000} position={[1975.09, 2452.52, 5007.95]} name="Camera" makeDefault={true} />
       <CameraFollow gliderRef={gliderRef} camera={camera} />
+
+      {/* Behind Controls Camera */}
+      {/* <PerspectiveCamera fov={75} aspect={width / height} near={0.1} far={100000} position={[1975.09, 2452.52, 5007.95]} name="Camera" makeDefault={true} />
+      <CameraFollow gliderRef={gliderRef} camera={camera} /> */}
+
       {/* <OrthographicCamera
         name="Camera"
         makeDefault={true}
