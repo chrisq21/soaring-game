@@ -166,14 +166,25 @@ export const useMouseControlXZ = (gliderRef: any) => {
     }
   }, [])
 
+  const maxSpeed = 60
+  const minSpeed = 0.5
+
   useFrame(() => {
     if (gliderRef.current) {
       // rotate
       const direction = new THREE.Vector3(mouseX.current, 0, mouseY.current)
       gliderRef.current.lookAt(gliderRef.current.position.clone().add(direction))
 
+      // speed
+      // Calculate distance between mouse values and glider's position
+      const mouseDistanceFromCenter = Math.abs(mouseX.current) + Math.abs(mouseY.current)
+      const distanceToMax = 300
+      // Calculate speed based on the distance
+      const distance = Math.min(mouseDistanceFromCenter / distanceToMax, 1)
+      const speed = THREE.MathUtils.lerp(minSpeed, maxSpeed, distance)
+
       // move
-      direction.normalize().multiplyScalar(20)
+      direction.normalize().multiplyScalar(speed)
       gliderRef.current.position.add(direction)
     }
   })

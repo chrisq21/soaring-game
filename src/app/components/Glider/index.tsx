@@ -14,8 +14,7 @@ type GliderProps = {
 
 function Glider({gliderRef, isInLift, controlsType = ControlTypes.BASE}: GliderProps) {
   if (controlsType === ControlTypes.BASE) {
-    // useBaseControls(gliderRef, isInLift)
-    useMouseControlXZ(gliderRef)
+    useBaseControls(gliderRef, isInLift)
   }
 
   if (controlsType === ControlTypes.BACK) {
