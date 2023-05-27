@@ -147,12 +147,8 @@ export const useMouseControlXY = (gliderRef: any) => {
 
 // mouse move xz plane with damping
 export const useMouseControlXZ = (gliderRef: any) => {
-  const {camera} = useThree()
   const mouseX = useRef(0)
   const mouseY = useRef(0)
-  const target = useRef(new THREE.Vector3())
-
-  const damping = 0.05
 
   const windowHalfX = window.innerWidth / 2
   const windowHalfY = window.innerHeight / 2
@@ -172,11 +168,13 @@ export const useMouseControlXZ = (gliderRef: any) => {
 
   useFrame(() => {
     if (gliderRef.current) {
-      target.current.x += mouseX.current - target.current.x * damping
-      target.current.y = gliderRef.current.position.y
-      target.current.z += mouseY.current - target.current.z * damping
+      // rotate
+      const direction = new THREE.Vector3(mouseX.current, 0, mouseY.current)
+      gliderRef.current.lookAt(gliderRef.current.position.clone().add(direction))
 
-      gliderRef.current.lookAt(target.current)
+      // move
+      direction.normalize().multiplyScalar(20)
+      gliderRef.current.position.add(direction)
     }
   })
 }
