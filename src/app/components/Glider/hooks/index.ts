@@ -1,4 +1,4 @@
-import {useFrame} from '@react-three/fiber'
+import {useFrame, useThree} from '@react-three/fiber'
 import {Ref, useEffect, useRef} from 'react'
 import * as THREE from 'three'
 
@@ -119,6 +119,7 @@ export const useGravity = (gliderRef: any, gravityStrength: number = defaultGrav
   })
 }
 
+// back view
 export const useMouseControlXY = (gliderRef: any) => {
   const mouseX = useRef(0)
   const mouseY = useRef(0)
@@ -144,14 +145,22 @@ export const useMouseControlXY = (gliderRef: any) => {
   })
 }
 
+// mouse move xz plane with damping
 export const useMouseControlXZ = (gliderRef: any) => {
+  const {camera} = useThree()
   const mouseX = useRef(0)
-  const mouseZ = useRef(0)
+  const mouseY = useRef(0)
+  const target = useRef(new THREE.Vector3())
+
+  const damping = 0.05
+
+  const windowHalfX = window.innerWidth / 2
+  const windowHalfY = window.innerHeight / 2
 
   useEffect(() => {
-    const handleMouseMove = (event) => {
-      mouseX.current = ((event.clientX / window.innerWidth) * 2 - 1) * 100
-      mouseZ.current = ((1 - event.clientY / window.innerHeight) * 2 - 1) * 100
+    const handleMouseMove = (event: MouseEvent) => {
+      mouseX.current = event.clientX - windowHalfX
+      mouseY.current = event.clientY - windowHalfY
     }
 
     window.addEventListener('mousemove', handleMouseMove)
@@ -163,9 +172,11 @@ export const useMouseControlXZ = (gliderRef: any) => {
 
   useFrame(() => {
     if (gliderRef.current) {
-      const gliderPosition = gliderRef.current.position
-      const targetPosition = new THREE.Vector3(mouseX.current, 0, -mouseZ.current)
-      gliderPosition.add(targetPosition)
+      target.current.x += mouseX.current - target.current.x * damping
+      target.current.y = gliderRef.current.position.y
+      target.current.z += mouseY.current - target.current.z * damping
+
+      gliderRef.current.lookAt(target.current)
     }
   })
 }
