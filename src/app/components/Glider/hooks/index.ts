@@ -152,6 +152,7 @@ export const useMouseControlXZ = (gliderRef: any) => {
 
   const windowHalfX = window.innerWidth / 2
   const windowHalfY = window.innerHeight / 2
+  const mouseDistanceForMaxSpeed = Math.min(windowHalfX, windowHalfY) - 25
 
   useEffect(() => {
     const handleMouseMove = (event: MouseEvent) => {
@@ -166,8 +167,8 @@ export const useMouseControlXZ = (gliderRef: any) => {
     }
   }, [])
 
-  const maxSpeed = 60
-  const minSpeed = 0.5
+  const maxSpeed = 100
+  const minSpeed = 40
 
   useFrame(() => {
     if (gliderRef.current) {
@@ -176,12 +177,17 @@ export const useMouseControlXZ = (gliderRef: any) => {
       gliderRef.current.lookAt(gliderRef.current.position.clone().add(direction))
 
       // speed
+      let speed = minSpeed
       // Calculate distance between mouse values and glider's position
       const mouseDistanceFromCenter = Math.abs(mouseX.current) + Math.abs(mouseY.current)
-      const distanceToMax = 300
-      // Calculate speed based on the distance
-      const distance = Math.min(mouseDistanceFromCenter / distanceToMax, 1)
-      const speed = THREE.MathUtils.lerp(minSpeed, maxSpeed, distance)
+
+      // Only increase speed if glider is far away enough from mouse
+      const distanceThresholdForSpeedIncrease = 150
+      if (mouseDistanceFromCenter > distanceThresholdForSpeedIncrease) {
+        // Calculate speed based on the distance
+        const percentageToMaxSpeed = Math.min((mouseDistanceFromCenter - distanceThresholdForSpeedIncrease) / mouseDistanceForMaxSpeed, 1)
+        speed = THREE.MathUtils.lerp(minSpeed, maxSpeed, percentageToMaxSpeed)
+      }
 
       // move
       direction.normalize().multiplyScalar(speed)
