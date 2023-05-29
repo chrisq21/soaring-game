@@ -1,4 +1,4 @@
-import {useKeyboardControls, useGravity, useLift, useForwardMovement, useMouseControlXZ} from '.'
+import {useGravity, useLift, useMouseControlXZ} from '.'
 
 export default (gliderRef: any, isInLift: boolean) => {
   useMouseControlXZ(gliderRef)

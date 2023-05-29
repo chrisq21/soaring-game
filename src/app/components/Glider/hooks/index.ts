@@ -145,19 +145,47 @@ export const useMouseControlXY = (gliderRef: any) => {
   })
 }
 
+export const getMouseControlledSpeed = (
+  minSpeed: number = 40,
+  maxSpeed: number = 100,
+  mouseX: number,
+  mouseY: number,
+  distanceThresholdForSpeedIncrease: number = 150
+) => {
+  const windowHalfX = window.innerWidth / 2
+  const windowHalfY = window.innerHeight / 2
+  const mouseDistanceForMaxSpeed = Math.min(windowHalfX, windowHalfY) - 25
+  let speed = minSpeed
+
+  // Calculate distance between mouse values and glider's position
+  const mouseDistanceFromCenter = Math.abs(mouseX) + Math.abs(mouseY)
+
+  // Only increase speed if glider is far away enough from mouse
+  if (mouseDistanceFromCenter > distanceThresholdForSpeedIncrease) {
+    // Calculate speed based on the distance
+    const percentageToMaxSpeed = Math.min((mouseDistanceFromCenter - distanceThresholdForSpeedIncrease) / mouseDistanceForMaxSpeed, 1)
+    speed = THREE.MathUtils.lerp(minSpeed, maxSpeed, percentageToMaxSpeed)
+  }
+
+  return speed
+}
+
 // mouse move xz plane with damping
 export const useMouseControlXZ = (gliderRef: any) => {
   const mouseX = useRef(0)
   const mouseY = useRef(0)
-
   const windowHalfX = window.innerWidth / 2
   const windowHalfY = window.innerHeight / 2
-  const mouseDistanceForMaxSpeed = Math.min(windowHalfX, windowHalfY) - 25
+  const minSpeed = 40
+  const maxSpeed = 100
+  const speed = useRef(minSpeed)
 
   useEffect(() => {
     const handleMouseMove = (event: MouseEvent) => {
       mouseX.current = event.clientX - windowHalfX
       mouseY.current = event.clientY - windowHalfY
+
+      speed.current = getMouseControlledSpeed(minSpeed, maxSpeed, mouseX.current, mouseY.current)
     }
 
     window.addEventListener('mousemove', handleMouseMove)
@@ -167,30 +195,14 @@ export const useMouseControlXZ = (gliderRef: any) => {
     }
   }, [])
 
-  const maxSpeed = 100
-  const minSpeed = 40
-
   useFrame(() => {
     if (gliderRef.current) {
       // rotate
       const direction = new THREE.Vector3(mouseX.current, 0, mouseY.current)
       gliderRef.current.lookAt(gliderRef.current.position.clone().add(direction))
 
-      // speed
-      let speed = minSpeed
-      // Calculate distance between mouse values and glider's position
-      const mouseDistanceFromCenter = Math.abs(mouseX.current) + Math.abs(mouseY.current)
-
-      // Only increase speed if glider is far away enough from mouse
-      const distanceThresholdForSpeedIncrease = 150
-      if (mouseDistanceFromCenter > distanceThresholdForSpeedIncrease) {
-        // Calculate speed based on the distance
-        const percentageToMaxSpeed = Math.min((mouseDistanceFromCenter - distanceThresholdForSpeedIncrease) / mouseDistanceForMaxSpeed, 1)
-        speed = THREE.MathUtils.lerp(minSpeed, maxSpeed, percentageToMaxSpeed)
-      }
-
       // move
-      direction.normalize().multiplyScalar(speed)
+      direction.normalize().multiplyScalar(speed.current)
       gliderRef.current.position.add(direction)
     }
   })
