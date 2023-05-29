@@ -22,7 +22,7 @@ export default function Scene({...props}) {
   const [isInLift, setIsInLift] = useState(false)
   const thermalMeshesArrayRef = useRef([])
 
-  const controlsType = ControlTypes.BASE
+  const controlsType = ControlTypes.BACK
 
   // Detect glider intersection with thermals
   useFrame(() => {

@@ -138,9 +138,25 @@ export const useMouseControlXY = (gliderRef: any) => {
   }, [])
 
   useFrame(() => {
+    // bounds
+    const maxX = 8000
+    const maxY = 10000
+    const floor = 50
+
     if (gliderRef.current) {
       const mousePositionVector = new THREE.Vector3(mouseX.current, mouseY.current, 0)
       gliderRef.current.position.add(mousePositionVector)
+
+      // Restrict glider movement to bounds
+      const gliderPosition = gliderRef.current.position
+
+      if (Math.abs(gliderPosition.x) > maxX) {
+        gliderPosition.x = maxX * Math.sign(gliderPosition.x)
+      }
+
+      if (Math.abs(gliderPosition.y) > maxY || gliderPosition.y < floor) {
+        gliderPosition.y = Math.max(floor, Math.min(maxY, gliderPosition.y))
+      }
     }
   })
 }
