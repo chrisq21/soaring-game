@@ -142,9 +142,10 @@ export const useMouseControlXY = (gliderRef: any) => {
     const maxX = 8000
     const maxY = 10000
     const floor = 50
+    const damping = 1.3
 
     if (gliderRef.current) {
-      const mousePositionVector = new THREE.Vector3(mouseX.current, mouseY.current, 0)
+      const mousePositionVector = new THREE.Vector3(mouseX.current / damping, mouseY.current / damping, 0)
       gliderRef.current.position.add(mousePositionVector)
 
       // Restrict glider movement to bounds
