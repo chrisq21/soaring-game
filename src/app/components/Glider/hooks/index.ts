@@ -120,6 +120,7 @@ export const useGravity = (gliderRef: any, gravityStrength: number = defaultGrav
 }
 
 // back view
+
 export const useMouseControlXY = (gliderRef: any) => {
   const mouseX = useRef(0)
   const mouseY = useRef(0)
@@ -137,15 +138,89 @@ export const useMouseControlXY = (gliderRef: any) => {
     }
   }, [])
 
+  const turbulenceForce = useRef(new THREE.Vector3(0, 0, 0))
+  const turbulenceElapsedTime = useRef(0)
+  const turbulenceStartTime = useRef(0)
+  const turbulenceComplete = useRef(true)
+
+  function getRandomNumber(min: number, max: number) {
+    return Math.floor(Math.random() * (max - min + 1)) + min
+  }
+
+  const startTurbulence = () => {
+    turbulenceComplete.current = false
+    const totalTurbTime = getRandomNumber(0.5, 3) // seconds
+
+    turbulenceStartTime.current = performance.now()
+    turbulenceForce.current = new THREE.Vector3((Math.random() - 0.5) * 100, (Math.random() - 0.5) * 100, 0)
+
+    const minTurb = 5
+    const maxTurb = 30
+    const turbulenceIntensity = getRandomNumber(minTurb, maxTurb)
+
+    const applyTurb = () => {
+      turbulenceElapsedTime.current = performance.now()
+      const elapsedTime = (turbulenceElapsedTime.current - turbulenceStartTime.current) / 1000
+
+      if (elapsedTime >= totalTurbTime) {
+        turbulenceComplete.current = true
+        turbulenceForce.current = new THREE.Vector3(0, 0, 0)
+        turbulenceElapsedTime.current = 0
+        return
+      }
+
+      // 0% -> 20% ease in to max turb
+      // 10% -> 80% maintain max turb
+      // 80% -> 100% ease out to zero turb
+
+      const percentageToCompletion = (elapsedTime / totalTurbTime) * 100
+
+      let adjustedIntensity = turbulenceIntensity
+
+      if (percentageToCompletion < 20) {
+        // lerp from 0 to max
+        adjustedIntensity = THREE.MathUtils.lerp(0, turbulenceIntensity, percentageToCompletion / 20)
+      } else if (percentageToCompletion > 80) {
+        // lerp from max to 0
+        adjustedIntensity = THREE.MathUtils.lerp(turbulenceIntensity, 0, (percentageToCompletion - 80) / 20)
+      } else {
+        // maintain max
+        adjustedIntensity = turbulenceIntensity
+      }
+
+      turbulenceForce.current.normalize()
+      if (adjustedIntensity > 0) {
+        turbulenceForce.current.multiplyScalar(adjustedIntensity)
+      }
+
+      if (!turbulenceComplete.current) {
+        requestAnimationFrame(applyTurb)
+      }
+    }
+    applyTurb()
+  }
+
   useFrame(() => {
-    // bounds
+    // Bounds
     const maxX = 8000
     const maxY = 10000
     const floor = 50
     const damping = 1.3
+    const turbFrequency = 0.02
 
     if (gliderRef.current) {
       const mousePositionVector = new THREE.Vector3(mouseX.current / damping, mouseY.current / damping, 0)
+
+      // Add turbulence
+      // TODO Add easing in and out of the turbulence
+      const shouldAddRandomTurb = Math.random() < turbFrequency // Adjust the probability of turbulence here
+      if (shouldAddRandomTurb && turbulenceComplete.current) {
+        startTurbulence()
+      }
+
+      // apply turb always, its usually zero
+      mousePositionVector.add(turbulenceForce.current)
+
       gliderRef.current.position.add(mousePositionVector)
 
       // Restrict glider movement to bounds
