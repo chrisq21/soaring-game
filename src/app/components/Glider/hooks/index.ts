@@ -293,8 +293,13 @@ export const useMouseControlXZ = (gliderRef: any) => {
   useFrame(() => {
     if (gliderRef.current) {
       // rotate
-      targetDirection.set(mouseX.current, 0, mouseY.current)
-      currentDirection.lerp(targetDirection, lerpFactor)
+
+      const mouseDistanceFromCenter = Math.abs(mouseX.current) + Math.abs(mouseY.current)
+      if (mouseDistanceFromCenter > 25) {
+        targetDirection.set(mouseX.current, 0, mouseY.current)
+        currentDirection.lerp(targetDirection, lerpFactor)
+      }
+
       gliderRef.current.lookAt(gliderRef.current.position.clone().add(currentDirection))
 
       // move
