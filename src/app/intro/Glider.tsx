@@ -1,7 +1,6 @@
 import React, {useEffect, useRef} from 'react'
-import Body from './Body'
-import useBaseControls from './hooks/useBaseControls'
-import {useForwardMovement, useGravity, useLift, useMouseControlXY, useMouseControlXZ} from './hooks'
+import Body from '../components/Glider/Body'
+import {useGravity, useLift, useMouseControlXY, useMouseControlXZ} from '../components/Glider/hooks/'
 import {ControlTypes} from '@/app/types/controls'
 import {useFrame} from '@react-three/fiber'
 import * as THREE from 'three'
@@ -13,6 +12,10 @@ type GliderProps = {
 }
 
 function Glider({gliderRef, isInLift, controlsType = ControlTypes.BASE}: GliderProps) {
+  useMouseControlXZ(gliderRef)
+  useGravity(gliderRef)
+  useLift(gliderRef, isInLift)
+
   return <Body gliderRef={gliderRef} />
 }
 

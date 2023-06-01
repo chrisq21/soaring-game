@@ -4,7 +4,7 @@ import {useThree, useFrame} from '@react-three/fiber'
 import React, {useRef, useState} from 'react'
 
 import CustomCamera from '../components/Camera'
-import Glider from '../components/Glider'
+import Glider from './Glider'
 import Ground from '../components/Ground'
 import Lights from '../components/Lights'
 import Thermals from '../components/Thermals'
