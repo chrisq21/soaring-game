@@ -131,10 +131,26 @@ export const useMouseControlXY = (gliderRef: any) => {
       mouseY.current = ((1 - event.clientY / window.innerHeight) * 2 - 1) * 100
     }
 
+    function handleTouch(event: TouchEvent) {
+      // Prevent the default touch event behavior
+      event.preventDefault()
+
+      // Get the first touch object from the touches array
+      const touch = event.touches[0]
+
+      // Update the touch position
+      mouseX.current = touch.clientX
+      mouseY.current = touch.clientY
+    }
+
     window.addEventListener('mousemove', handleMouseMove)
+    window.addEventListener('touchmove', handleTouch, false)
+    window.addEventListener('touchstart', handleTouch, false)
 
     return () => {
       window.removeEventListener('mousemove', handleMouseMove)
+      window.removeEventListener('touchmove', handleTouch)
+      window.removeEventListener('touchstart', handleTouch)
     }
   }, [])
 
@@ -283,10 +299,26 @@ export const useMouseControlXZ = (gliderRef: any) => {
       speed.current = getMouseControlledSpeed(minSpeed, maxSpeed, mouseX.current, mouseY.current)
     }
 
+    function handleTouch(event: TouchEvent) {
+      // Prevent the default touch event behavior
+      event.preventDefault()
+
+      // Get the first touch object from the touches array
+      const touch = event.touches[0]
+
+      // Update the touch position
+      mouseX.current = touch.clientX
+      mouseY.current = touch.clientY
+    }
+
     window.addEventListener('mousemove', handleMouseMove)
+    window.addEventListener('touchmove', handleTouch, false)
+    window.addEventListener('touchstart', handleTouch, false)
 
     return () => {
       window.removeEventListener('mousemove', handleMouseMove)
+      window.removeEventListener('touchmove', handleTouch)
+      window.removeEventListener('touchstart', handleTouch)
     }
   }, [])
 
