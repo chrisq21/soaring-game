@@ -268,9 +268,12 @@ export const useMouseControlXZ = (gliderRef: any) => {
   const mouseY = useRef(0)
   const windowHalfX = window.innerWidth / 2
   const windowHalfY = window.innerHeight / 2
-  const minSpeed = 40
-  const maxSpeed = 100
+  const minSpeed = 20
+  const maxSpeed = 80
   const speed = useRef(minSpeed)
+  const targetDirection = new THREE.Vector3(1, 1, 1)
+  const currentDirection = new THREE.Vector3(1, 1, 1)
+  const lerpFactor = 0.05
 
   useEffect(() => {
     const handleMouseMove = (event: MouseEvent) => {
@@ -290,12 +293,13 @@ export const useMouseControlXZ = (gliderRef: any) => {
   useFrame(() => {
     if (gliderRef.current) {
       // rotate
-      const direction = new THREE.Vector3(mouseX.current, 0, mouseY.current)
-      gliderRef.current.lookAt(gliderRef.current.position.clone().add(direction))
+      targetDirection.set(mouseX.current, 0, mouseY.current)
+      currentDirection.lerp(targetDirection, lerpFactor)
+      gliderRef.current.lookAt(gliderRef.current.position.clone().add(currentDirection))
 
       // move
-      direction.normalize().multiplyScalar(speed.current)
-      gliderRef.current.position.add(direction)
+      const moveDirection = currentDirection.clone().normalize().multiplyScalar(speed.current)
+      gliderRef.current.position.add(moveDirection)
     }
   })
 }
