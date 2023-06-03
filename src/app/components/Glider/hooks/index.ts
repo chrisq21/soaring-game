@@ -324,15 +324,30 @@ export const useMouseControlXZ = (gliderRef: any) => {
 
   useFrame(() => {
     if (gliderRef.current) {
-      // rotate
+      const targetDirection = new THREE.Vector3(mouseX.current, 0, mouseY.current)
+      const glider = gliderRef.current
 
-      const mouseDistanceFromCenter = Math.abs(mouseX.current) + Math.abs(mouseY.current)
-      if (mouseDistanceFromCenter > 50) {
-        targetDirection.set(mouseX.current, 0, mouseY.current)
-        currentDirection.lerp(targetDirection, lerpFactor)
+      // Calculate the current direction of the glider
+      const currentDirection = glider.getWorldDirection(new THREE.Vector3())
+
+      // Calculate the angle between the current direction and the target direction
+      const angleBetween = currentDirection.angleTo(targetDirection)
+
+      // Define the rotation speed (adjust this value as needed)
+      const rotationSpeed = 0.03
+
+      // Check if the glider needs to rotate
+      if (angleBetween > rotationSpeed) {
+        // Calculate the incremental rotation amount
+        const rotationAmount = Math.min(rotationSpeed, angleBetween)
+
+        // Calculate the rotation axis
+        const rotationAxis = new THREE.Vector3(0, 1, 0)
+        rotationAxis.crossVectors(currentDirection, targetDirection).normalize()
+
+        // Apply the incremental rotation to the glider
+        glider.rotateOnAxis(rotationAxis, rotationAmount)
       }
-
-      gliderRef.current.lookAt(gliderRef.current.position.clone().add(currentDirection))
 
       // move
       const moveDirection = currentDirection.clone().normalize().multiplyScalar(speed.current)
