@@ -337,9 +337,15 @@ export const useMouseControlXZ = (gliderRef: any) => {
       const rotationSpeed = 0.03
 
       // Check if the glider needs to rotate
-      if (angleBetween > rotationSpeed) {
+      if (angleBetween > 0.01) {
+        let adjustedSpeed = rotationSpeed
+
+        if (angleBetween < 1) {
+          // dampen the speed when the angle is close (start and stop of turn)
+          adjustedSpeed = rotationSpeed * angleBetween
+        }
         // Calculate the incremental rotation amount
-        const rotationAmount = Math.min(rotationSpeed, angleBetween)
+        const rotationAmount = Math.min(adjustedSpeed, angleBetween)
 
         // Calculate the rotation axis
         const rotationAxis = new THREE.Vector3(0, 1, 0)
