@@ -52,6 +52,37 @@ export default function Scene({...props}) {
     }
   })
 
+  /* 
+  
+
+  Speed control
+
+  * I need the speed to not be snappy
+  * Pitching forwarrd (moving mouse forward) should result in a slow acceleration
+  * Pitching back should result in slow deceleration
+
+
+
+  ----
+    # Speed to altitude conversion
+
+
+
+    For transferring speed to lift, 
+    - if your bank angle decreases, your altitude += your previous speed (divided by something)
+    - if your bank angle increases, your altitude -= your current speed
+
+    - Simplified
+    * Going from low speed to high speed:
+      * Altitude decreases at constant rate
+    * Going from high speed to low speed
+      * Altitude increases for a brief amount of time
+      * 
+    
+    Caveat: The glider won't increase alttitude if the pitch angle is never above the horizon, which you can't do in this game
+
+  */
+
   return (
     <>
       <color attach="background" args={['#fbf1d6']} />
