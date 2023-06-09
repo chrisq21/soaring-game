@@ -279,7 +279,7 @@ export const getMouseControlledSpeed = (
 }
 
 // mouse move xz plane with damping
-export const useMouseControlXZ = (gliderRef: any) => {
+export const useMouseControlXZ = (gliderRef: any, modelRef: any) => {
   const mouseX = useRef(0)
   const mouseY = useRef(0)
   const windowHalfX = window.innerWidth / 2
@@ -323,7 +323,7 @@ export const useMouseControlXZ = (gliderRef: any) => {
   }, [])
 
   useFrame(() => {
-    if (gliderRef.current) {
+    if (gliderRef.current && modelRef.current) {
       const targetDirection = new THREE.Vector3(mouseX.current, 0, mouseY.current)
       const glider = gliderRef.current
 
@@ -361,6 +361,18 @@ export const useMouseControlXZ = (gliderRef: any) => {
 
         // Apply the incremental rotation to the glider
         glider.rotation.y -= rotationDirection * rotationAmount
+
+        // bank rotation
+        let bankAngle = 0
+        if (angleBetween > 0) {
+          bankAngle = THREE.MathUtils.lerp(0, Math.PI / 4, angleBetween / Math.PI)
+        }
+
+        glider.children.forEach((child: any) => {
+          child.rotation.set(0, Math.PI / 2, 0)
+          // Apply bank to model
+          child.rotateX(glider.quaternion.x + rotationDirection * bankAngle)
+        })
       }
 
       // move

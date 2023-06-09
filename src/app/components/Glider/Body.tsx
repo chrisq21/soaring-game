@@ -6,14 +6,15 @@ const gliderStartingHeight = 5000
 
 type GliderBody = {
   gliderRef: any
+  modelRef: any
 }
 
-function GliderBody({gliderRef}: GliderBody) {
+function GliderBody({gliderRef, modelRef}: GliderBody) {
   const gltf = useLoader(GLTFLoader, '/scene.gltf')
 
   return (
-    <group name="glider" position={[0, gliderStartingHeight, 0]} rotation={[-Math.PI, 0, -Math.PI]} scale={1.03} ref={gliderRef}>
-      <primitive name="glider model" object={gltf.scene} scale={50} rotation={[-Math.PI, Math.PI / 2, -Math.PI]} castShadow receiveShadow />
+    <group name="glider" position={[0, gliderStartingHeight, 0]} rotation={[-Math.PI, -Math.PI, -Math.PI]} scale={1.03} ref={gliderRef}>
+      <primitive ref={modelRef} name="glider model" object={gltf.scene} scale={50} rotation={[0, 0, 0]} castShadow receiveShadow />
     </group>
   )
 }
