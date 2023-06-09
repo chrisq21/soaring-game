@@ -290,6 +290,7 @@ export const useMouseControlXZ = (gliderRef: any, modelRef: any) => {
   const targetDirection = new THREE.Vector3(1, 1, 1)
   const currentDirection = new THREE.Vector3(1, 1, 1)
   const lerpFactor = 0.03
+  let intialCopy: any = null
 
   useEffect(() => {
     const handleMouseMove = (event: MouseEvent) => {
@@ -323,7 +324,7 @@ export const useMouseControlXZ = (gliderRef: any, modelRef: any) => {
   }, [])
 
   useFrame(() => {
-    if (gliderRef.current && modelRef.current) {
+    if (gliderRef?.current && modelRef?.current) {
       const targetDirection = new THREE.Vector3(mouseX.current, 0, mouseY.current)
       const glider = gliderRef.current
 
@@ -362,16 +363,15 @@ export const useMouseControlXZ = (gliderRef: any, modelRef: any) => {
         // Apply the incremental rotation to the glider
         glider.rotation.y -= rotationDirection * rotationAmount
 
-        // bank rotation
-        let bankAngle = 0
-        if (angleBetween > 0) {
-          bankAngle = THREE.MathUtils.lerp(0, Math.PI / 4, angleBetween / Math.PI)
-        }
+        /* Rotations */
+        let bankAngle = THREE.MathUtils.lerp(0, Math.PI / 4, angleBetween / Math.PI)
+        let pitchAngle = THREE.MathUtils.lerp(0, Math.PI / 8, (speed.current - minSpeed) / maxSpeed)
 
         glider.children.forEach((child: any) => {
           child.rotation.set(0, Math.PI / 2, 0)
           // Apply bank to model
           child.rotateX(glider.quaternion.x + rotationDirection * bankAngle)
+          child.rotateZ(glider.quaternion.z + pitchAngle)
         })
       }
 

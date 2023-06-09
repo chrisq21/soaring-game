@@ -13,7 +13,8 @@ type GliderProps = {
 }
 
 function Glider({gliderRef, isInLift, controlsType = ControlTypes.BASE}: GliderProps) {
-  return <Body gliderRef={gliderRef} />
+  const modelRef = useRef()
+  return <Body gliderRef={gliderRef} modelRef={modelRef} />
 }
 
 export default Glider

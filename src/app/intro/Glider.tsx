@@ -12,11 +12,12 @@ type GliderProps = {
 }
 
 function Glider({gliderRef, isInLift, controlsType = ControlTypes.BASE}: GliderProps) {
-  useMouseControlXZ(gliderRef)
+  const modelRef = useRef()
+  useMouseControlXZ(gliderRef, modelRef)
   useGravity(gliderRef)
   useLift(gliderRef, isInLift)
 
-  return <Body gliderRef={gliderRef} />
+  return <Body gliderRef={gliderRef} modelRef={modelRef} />
 }
 
 export default Glider
