@@ -1,7 +1,13 @@
 import React, {useEffect, useRef, useState} from 'react'
 import * as THREE from 'three'
+
+type ThermalProps = {
+  pushThermalMeshRef: any
+  nodes: any
+  materials: any
+}
 // 9000, 20000
-function Thermal({pushThermalMeshRef}) {
+function Thermal({pushThermalMeshRef, nodes, materials}: ThermalProps) {
   const thermalMeshRef = useRef(null)
   const max = 40000
   const min = -10
@@ -17,16 +23,28 @@ function Thermal({pushThermalMeshRef}) {
     }
   }, [])
   return (
-    <mesh
-      name={`thermal`}
-      geometry={new THREE.BoxGeometry(2000, 2000)}
-      material={new THREE.MeshBasicMaterial({color: 'blue'})}
-      receiveShadow
-      position={[xOff, 100, -zOff]}
-      rotation={[-Math.PI / 2, 0, 0]}
-      ref={thermalMeshRef}
-      // scale={0.1}
-    />
+    <>
+      <mesh
+        name={`thermal`}
+        geometry={new THREE.BoxGeometry(2000, 2000)}
+        material={new THREE.MeshBasicMaterial({color: 'blue'})}
+        receiveShadow
+        position={[xOff, 100, -zOff]}
+        rotation={[-Math.PI / 2, 0, 0]}
+        ref={thermalMeshRef}
+        // scale={0.1}
+      />
+      <mesh
+        name="Cloud"
+        geometry={nodes.Cloud.geometry}
+        material={materials['Clouds B']}
+        castShadow
+        receiveShadow
+        position={[xOff, 10000, -zOff]}
+        rotation={[-Math.PI / 2, 0, -Math.PI / 2]}
+        scale={10}
+      />
+    </>
   )
 }
 

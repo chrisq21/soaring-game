@@ -11,7 +11,7 @@ import Thermals from '../components/Thermals'
 import {ControlTypes} from '../types/controls'
 
 export default function Scene({...props}) {
-  const {nodes, materials} = useSpline('https://prod.spline.design/vnJ4BLS7Ojq1Qocw/scene.splinecode')
+  const {nodes, materials} = useSpline('https://prod.spline.design/zbNFDumFMuwLUsXd/scene.splinecode')
 
   const {camera} = useThree()
   const gliderRef = useRef(null)
@@ -85,14 +85,16 @@ export default function Scene({...props}) {
 
   return (
     <>
-      <color attach="background" args={['#fbf1d6']} />
+      {/* <color attach="background" args={['#fbf1d6']} /> */}
+      <color attach="background" args={['#d2ebf4']} />
+      {/* <fog attach="fog" args={['#d2ebf4', 2500, 4227]} /> */}
       <CustomCamera controlsType={controlsType} gliderRef={gliderRef} camera={camera} />
       <group {...props} dispose={null}>
         <group name="scene" position={[0, 0, 0]}>
           <Glider gliderRef={gliderRef} isInLift={isInLift} controlsType={controlsType} />
           <Ground nodes={nodes} materials={materials} isInLift={isInLift} />
           <Lights gliderRef={gliderRef} />
-          <Thermals thermalMeshesArrayRef={thermalMeshesArrayRef} />
+          <Thermals thermalMeshesArrayRef={thermalMeshesArrayRef} nodes={nodes} materials={materials} />
         </group>
       </group>
     </>

@@ -54,7 +54,7 @@ export default function Scene({...props}) {
 
   return (
     <>
-      <color attach="background" args={['#fbf1d6']} />
+      {/* <color attach="background" args={['#fbf1d6']} /> */}
       <CustomCamera controlsType={controlsType} gliderRef={gliderRef} camera={camera} />
       <group {...props} dispose={null}>
         <group name="scene" position={[0, 0, 0]}>
