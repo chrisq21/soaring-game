@@ -32,7 +32,7 @@ function Thermal({pushThermalMeshRef, nodes, materials}: ThermalProps) {
         position={[xOff, 100, -zOff]}
         rotation={[-Math.PI / 2, 0, 0]}
         ref={thermalMeshRef}
-        // scale={0.1}
+        scale={1.3}
       />
       <mesh
         name="Cloud"
