@@ -300,9 +300,9 @@ export const useMouseControlXZ = (gliderRef: any, modelRef: any) => {
   useFrame(() => {
     if (gliderRef?.current && modelRef?.current) {
       /* Airspeed | start */
-      const mouseDistanceFromCenter = Math.abs(mouseX.current) + Math.abs(mouseY.current)
+      const mouseDistanceFromCenter = Math.abs(mouseX.current) + Math.abs(mouseY.current) > 0 ? Math.abs(mouseX.current) + Math.abs(mouseY.current) : 0.001
 
-      let percentageToMaxSpeed = Math.min((mouseDistanceFromCenter - distanceThresholdForSpeedIncrease) / mouseDistanceForMaxSpeed, 1)
+      let percentageToMaxSpeed = Math.min(mouseDistanceFromCenter / mouseDistanceForMaxSpeed, 1)
       if (percentageToMaxSpeed <= 0.1) {
         percentageToMaxSpeed = 0.1
       }
