@@ -259,7 +259,7 @@ export const useMouseControlXZ = (gliderRef: any, modelRef: any) => {
   const mouseY = useRef(0)
   const windowHalfX = window.innerWidth / 2
   const windowHalfY = window.innerHeight / 2
-  const minSpeed = 25
+  const minSpeed = 15
   const maxSpeed = 60
   const forwardSpeedRef = useRef(minSpeed)
   const pitchSpeed = useRef(minSpeed)
