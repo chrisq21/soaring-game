@@ -253,31 +253,6 @@ export const useMouseControlXY = (gliderRef: any) => {
   })
 }
 
-export const getMouseControlledSpeed = (
-  minSpeed: number = 40,
-  maxSpeed: number = 100,
-  mouseX: number,
-  mouseY: number,
-  distanceThresholdForSpeedIncrease: number = 150
-) => {
-  const windowHalfX = window.innerWidth / 2
-  const windowHalfY = window.innerHeight / 2
-  const mouseDistanceForMaxSpeed = Math.min(windowHalfX, windowHalfY) - 25
-  let speed = minSpeed
-
-  // Calculate distance between mouse values and glider's position
-  const mouseDistanceFromCenter = Math.abs(mouseX) + Math.abs(mouseY)
-
-  // Only increase speed if glider is far away enough from mouse
-  if (mouseDistanceFromCenter > distanceThresholdForSpeedIncrease) {
-    // Calculate speed based on the distance
-    const percentageToMaxSpeed = Math.min((mouseDistanceFromCenter - distanceThresholdForSpeedIncrease) / mouseDistanceForMaxSpeed, 1)
-    speed = THREE.MathUtils.lerp(minSpeed, maxSpeed, percentageToMaxSpeed)
-  }
-
-  return speed
-}
-
 // mouse move xz plane with damping
 export const useMouseControlXZ = (gliderRef: any, modelRef: any) => {
   const mouseX = useRef(0)
@@ -286,18 +261,23 @@ export const useMouseControlXZ = (gliderRef: any, modelRef: any) => {
   const windowHalfY = window.innerHeight / 2
   const minSpeed = 20
   const maxSpeed = 80
-  const speed = useRef(minSpeed)
+  const speedRef = useRef(minSpeed)
+  const pitchSpeed = useRef(minSpeed)
   const targetDirection = new THREE.Vector3(1, 1, 1)
   const currentDirection = new THREE.Vector3(1, 1, 1)
   const lerpFactor = 0.03
   let intialCopy: any = null
+  let speedIncrementAmount = 0.5
+
+  const mouseDistanceForMaxSpeed = Math.min(windowHalfX, windowHalfY) - 25
+  const distanceThresholdForSpeedIncrease = 150
+  let basePitchDamper = 0.1
+  let pitchDamper = basePitchDamper
 
   useEffect(() => {
     const handleMouseMove = (event: MouseEvent) => {
       mouseX.current = event.clientX - windowHalfX
       mouseY.current = event.clientY - windowHalfY
-
-      speed.current = getMouseControlledSpeed(minSpeed, maxSpeed, mouseX.current, mouseY.current)
     }
 
     function handleTouch(event: TouchEvent) {
@@ -325,6 +305,39 @@ export const useMouseControlXZ = (gliderRef: any, modelRef: any) => {
 
   useFrame(() => {
     if (gliderRef?.current && modelRef?.current) {
+      /* Airspeed | start */
+      const mouseDistanceFromCenter = Math.abs(mouseX.current) + Math.abs(mouseY.current)
+
+      let percentageToMaxSpeed = Math.min((mouseDistanceFromCenter - distanceThresholdForSpeedIncrease) / mouseDistanceForMaxSpeed, 1)
+      if (percentageToMaxSpeed <= 0.1) {
+        percentageToMaxSpeed = 0.1
+      }
+
+      pitchSpeed.current = THREE.MathUtils.lerp(minSpeed, maxSpeed, percentageToMaxSpeed)
+
+      let pitchProgress
+      if (speedRef.current > pitchSpeed.current) {
+        pitchProgress = pitchSpeed.current / speedRef.current
+      } else {
+        pitchProgress = speedRef.current / pitchSpeed.current
+      }
+      speedIncrementAmount = 0.5 // THREE.MathUtils.lerp(0.05, 0.5, pitchProgress)
+
+      if (mouseDistanceFromCenter > distanceThresholdForSpeedIncrease) {
+        if (speedRef.current < pitchSpeed.current) {
+          speedRef.current += speedIncrementAmount
+        }
+        if (speedRef.current > pitchSpeed.current) {
+          speedRef.current -= speedIncrementAmount
+        }
+      } else if (mouseDistanceFromCenter < distanceThresholdForSpeedIncrease) {
+        if (speedRef.current > minSpeed) {
+          speedRef.current -= speedIncrementAmount
+        }
+      }
+
+      /* Airspeed | stop */
+
       const targetDirection = new THREE.Vector3(mouseX.current, 0, mouseY.current)
       const glider = gliderRef.current
 
@@ -334,9 +347,9 @@ export const useMouseControlXZ = (gliderRef: any, modelRef: any) => {
       // Calculate the angle between the current direction and the target direction
       const angleBetween = currentDirection.angleTo(targetDirection)
 
-      // Define the rotation speed (adjust this value as needed)
-      const baseRotationSpeed = 0.03
-      const maxRotationSpeed = 0.05
+      /* Rotation speed | start */
+      const baseRotationSpeed = 0.02
+      const maxRotationSpeed = 0.04
 
       // Check if the glider needs to rotate
       if (angleBetween > 0.01) {
@@ -352,9 +365,10 @@ export const useMouseControlXZ = (gliderRef: any, modelRef: any) => {
           // dampen the speed when the angle is small (start and stop of turn)
           adjustedSpeed = baseRotationSpeed * angleBetween
         }
-        // Calculate the incremental rotation amount
-        const rotationAmount = Math.min(adjustedSpeed, angleBetween)
+        /* Rotation speed | end */
 
+        /* Roll rotation | start */
+        const rotationAmount = Math.min(adjustedSpeed, angleBetween)
         // Determine the rotation direction based on cross product
         const crossProduct = new THREE.Vector3()
         crossProduct.crossVectors(currentDirection, targetDirection)
@@ -363,20 +377,28 @@ export const useMouseControlXZ = (gliderRef: any, modelRef: any) => {
         // Apply the incremental rotation to the glider
         glider.rotation.y -= rotationDirection * rotationAmount
 
-        /* Rotations */
-        let bankAngle = THREE.MathUtils.lerp(0, Math.PI / 4, angleBetween / Math.PI)
-        let pitchAngle = THREE.MathUtils.lerp(0, Math.PI / 8, (speed.current - minSpeed) / maxSpeed)
+        /* Roll rotation | end */
+
+        /* 3D model Rotations | start */
+        let pitchProgress
+        if (speedRef.current > pitchSpeed.current) {
+          pitchProgress = pitchSpeed.current / speedRef.current
+        } else {
+          pitchProgress = speedRef.current / pitchSpeed.current
+        }
+        let rollAngle = THREE.MathUtils.lerp(0, Math.PI / 4, angleBetween / Math.PI)
+        let pitchAngle = THREE.MathUtils.lerp(0, Math.PI / 15, speedRef.current / maxSpeed)
 
         glider.children.forEach((child: any) => {
           child.rotation.set(0, Math.PI / 2, 0)
-          // Apply bank to model
-          child.rotateX(glider.quaternion.x + rotationDirection * bankAngle)
+          child.rotateX(glider.quaternion.x + rotationDirection * rollAngle)
           child.rotateZ(glider.quaternion.z + pitchAngle)
         })
+        /* 3D model Rotations | end */
       }
 
       // move
-      const moveDirection = currentDirection.clone().normalize().multiplyScalar(speed.current)
+      const moveDirection = currentDirection.clone().normalize().multiplyScalar(speedRef.current)
       gliderRef.current.position.add(moveDirection)
     }
   })
