@@ -259,11 +259,13 @@ export const useMouseControlXZ = (gliderRef: any, modelRef: any) => {
   const mouseY = useRef(0)
   const windowHalfX = window.innerWidth / 2
   const windowHalfY = window.innerHeight / 2
-  const minSpeed = 20
-  const maxSpeed = 80
-  const speedRef = useRef(minSpeed)
+  const minSpeed = 25
+  const maxSpeed = 60
+  const forwardSpeedRef = useRef(minSpeed)
   const pitchSpeed = useRef(minSpeed)
-  let speedIncrementAmount = 0.8
+  let speedIncrementAmount = 25
+  const baseRotationSpeed = 1
+  const maxRotationSpeed = 2.5
 
   const mouseDistanceForMaxSpeed = Math.min(windowHalfX, windowHalfY) - 25
   const distanceThresholdForSpeedIncrease = 150
@@ -297,7 +299,7 @@ export const useMouseControlXZ = (gliderRef: any, modelRef: any) => {
     }
   }, [])
 
-  useFrame(() => {
+  useFrame((_, delta) => {
     if (gliderRef?.current && modelRef?.current) {
       /* Airspeed | start */
       const mouseDistanceFromCenter = Math.abs(mouseX.current) + Math.abs(mouseY.current) > 0 ? Math.abs(mouseX.current) + Math.abs(mouseY.current) : 0.001
@@ -309,24 +311,18 @@ export const useMouseControlXZ = (gliderRef: any, modelRef: any) => {
 
       pitchSpeed.current = THREE.MathUtils.lerp(minSpeed, maxSpeed, percentageToMaxSpeed)
 
-      let pitchProgress
-      if (speedRef.current > pitchSpeed.current) {
-        pitchProgress = pitchSpeed.current / speedRef.current
-      } else {
-        pitchProgress = speedRef.current / pitchSpeed.current
-      }
       // speedIncrementAmount = THREE.MathUtils.lerp(0.5, 1, pitchProgress)
 
       if (mouseDistanceFromCenter > distanceThresholdForSpeedIncrease) {
-        if (speedRef.current < pitchSpeed.current) {
-          speedRef.current += speedIncrementAmount
+        if (forwardSpeedRef.current < pitchSpeed.current) {
+          forwardSpeedRef.current += speedIncrementAmount * delta
         }
-        if (speedRef.current > pitchSpeed.current) {
-          speedRef.current -= speedIncrementAmount
+        if (forwardSpeedRef.current > pitchSpeed.current) {
+          forwardSpeedRef.current -= speedIncrementAmount * delta
         }
       } else if (mouseDistanceFromCenter < distanceThresholdForSpeedIncrease) {
-        if (speedRef.current > minSpeed) {
-          speedRef.current -= speedIncrementAmount
+        if (forwardSpeedRef.current > minSpeed) {
+          forwardSpeedRef.current -= speedIncrementAmount * delta
         }
       }
 
@@ -342,8 +338,6 @@ export const useMouseControlXZ = (gliderRef: any, modelRef: any) => {
       const angleBetween = currentDirection.angleTo(targetDirection)
 
       /* Rotation speed | start */
-      const baseRotationSpeed = 0.02
-      const maxRotationSpeed = 0.04
 
       // Check if the glider needs to rotate
       if (angleBetween > 0.01) {
@@ -369,19 +363,14 @@ export const useMouseControlXZ = (gliderRef: any, modelRef: any) => {
         const rotationDirection = crossProduct.y >= 0 ? 1 : -1
 
         // Apply the incremental rotation to the glider
-        glider.rotation.y -= rotationDirection * rotationAmount
+        glider.rotation.y -= rotationDirection * rotationAmount * delta
 
         /* Roll rotation | end */
 
         /* 3D model Rotations | start */
-        let pitchProgress
-        if (speedRef.current > pitchSpeed.current) {
-          pitchProgress = pitchSpeed.current / speedRef.current
-        } else {
-          pitchProgress = speedRef.current / pitchSpeed.current
-        }
+
         let rollAngle = THREE.MathUtils.lerp(0, Math.PI / 4, angleBetween / Math.PI)
-        let pitchAngle = THREE.MathUtils.lerp(0, Math.PI / 15, speedRef.current / maxSpeed)
+        let pitchAngle = THREE.MathUtils.lerp(0, Math.PI / 15, forwardSpeedRef.current / maxSpeed)
 
         glider.children.forEach((child: any) => {
           child.rotation.set(0, Math.PI / 2, 0)
@@ -392,7 +381,7 @@ export const useMouseControlXZ = (gliderRef: any, modelRef: any) => {
       }
 
       // move
-      const moveDirection = currentDirection.clone().normalize().multiplyScalar(speedRef.current)
+      const moveDirection = currentDirection.clone().normalize().multiplyScalar(forwardSpeedRef.current)
       gliderRef.current.position.add(moveDirection)
     }
   })
