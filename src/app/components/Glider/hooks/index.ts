@@ -263,16 +263,10 @@ export const useMouseControlXZ = (gliderRef: any, modelRef: any) => {
   const maxSpeed = 80
   const speedRef = useRef(minSpeed)
   const pitchSpeed = useRef(minSpeed)
-  const targetDirection = new THREE.Vector3(1, 1, 1)
-  const currentDirection = new THREE.Vector3(1, 1, 1)
-  const lerpFactor = 0.03
-  let intialCopy: any = null
-  let speedIncrementAmount = 0.5
+  let speedIncrementAmount = 0.8
 
   const mouseDistanceForMaxSpeed = Math.min(windowHalfX, windowHalfY) - 25
   const distanceThresholdForSpeedIncrease = 150
-  let basePitchDamper = 0.1
-  let pitchDamper = basePitchDamper
 
   useEffect(() => {
     const handleMouseMove = (event: MouseEvent) => {
@@ -321,7 +315,7 @@ export const useMouseControlXZ = (gliderRef: any, modelRef: any) => {
       } else {
         pitchProgress = speedRef.current / pitchSpeed.current
       }
-      speedIncrementAmount = 0.5 // THREE.MathUtils.lerp(0.05, 0.5, pitchProgress)
+      // speedIncrementAmount = THREE.MathUtils.lerp(0.5, 1, pitchProgress)
 
       if (mouseDistanceFromCenter > distanceThresholdForSpeedIncrease) {
         if (speedRef.current < pitchSpeed.current) {
