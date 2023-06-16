@@ -257,6 +257,7 @@ export const useMouseControlXY = (gliderRef: any) => {
 export const useMouseControlXZ = (gliderRef: any, modelRef: any) => {
   const mouseX = useRef(0)
   const mouseY = useRef(0)
+  const rotationDirectionRef = useRef(0)
   const windowHalfX = window.innerWidth / 2
   const windowHalfY = window.innerHeight / 2
   const minSpeed = 15
@@ -360,10 +361,13 @@ export const useMouseControlXZ = (gliderRef: any, modelRef: any) => {
         // Determine the rotation direction based on cross product
         const crossProduct = new THREE.Vector3()
         crossProduct.crossVectors(currentDirection, targetDirection)
-        const rotationDirection = crossProduct.y >= 0 ? 1 : -1
+
+        if (angleBetween < 2) {
+          rotationDirectionRef.current = crossProduct.y >= 0 ? 1 : -1
+        }
 
         // Apply the incremental rotation to the glider
-        glider.rotation.y -= rotationDirection * rotationAmount * delta
+        glider.rotation.y -= rotationDirectionRef.current * rotationAmount * delta
 
         /* Roll rotation | end */
 
@@ -374,7 +378,7 @@ export const useMouseControlXZ = (gliderRef: any, modelRef: any) => {
 
         glider.children.forEach((child: any) => {
           child.rotation.set(0, Math.PI / 2, 0)
-          child.rotateX(glider.quaternion.x + rotationDirection * rollAngle)
+          child.rotateX(glider.quaternion.x + rotationDirectionRef.current * rollAngle)
           child.rotateZ(glider.quaternion.z + pitchAngle)
         })
         /* 3D model Rotations | end */
